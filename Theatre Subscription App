@@ -1,0 +1,88 @@
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+const FALLBACK_MOVIES = [
+  {
+    title: "Stree 2",
+    releaseDate: "2025-06-01",
+    accessDate: "2025-07-15",
+    included: true,
+    poster: "https://via.placeholder.com/300x450?text=Stree+2"
+  },
+  {
+    title: "KGF 3",
+    releaseDate: "2025-07-10",
+    accessDate: "2025-08-25",
+    included: false,
+    poster: "https://via.placeholder.com/300x450?text=KGF+3"
+  },
+  {
+    title: "Emergency",
+    releaseDate: "2025-05-20",
+    accessDate: "2025-06-30",
+    included: true,
+    poster: "https://via.placeholder.com/300x450?text=Emergency"
+  },
+  {
+    title: "Dhoom 4",
+    releaseDate: "2025-08-18",
+    accessDate: "2025-10-01",
+    included: false,
+    poster: "https://via.placeholder.com/300x450?text=Dhoom+4"
+  }
+];
+
+export default function App() {
+  const [filter, setFilter] = useState("all");
+  const [movies] = useState(FALLBACK_MOVIES);
+
+  const filteredMovies = movies.filter(movie => {
+    if (filter === "included") return movie.included;
+    if (filter === "premium") return !movie.included;
+    return true;
+  });
+
+  return (
+    <div className="p-4 space-y-6">
+      <h1 className="text-3xl font-bold">🎥 CineSub – Unlimited Theatre Movies</h1>
+      <p className="text-muted-foreground">One subscription. Watch anytime in theatres. Only ₹999/month.</p>
+
+      <div className="flex gap-2">
+        <Button onClick={() => setFilter("all")} variant={filter === "all" ? "default" : "outline"}>All Movies</Button>
+        <Button onClick={() => setFilter("included")} variant={filter === "included" ? "default" : "outline"}>Included</Button>
+        <Button onClick={() => setFilter("premium")} variant={filter === "premium" ? "default" : "outline"}>Premium</Button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        {filteredMovies.length > 0 ? (
+          filteredMovies.map((movie, idx) => (
+            <Card key={idx}>
+              <img
+                src={movie.poster || "https://via.placeholder.com/300x450?text=No+Image"}
+                alt={movie.title}
+                className="rounded-t-xl w-full h-[300px] object-cover"
+              />
+              <CardContent className="p-4 space-y-2">
+                <h2 className="text-xl font-semibold">{movie.title}</h2>
+                <p>🎬 Release: {movie.releaseDate}</p>
+                <p>🗓️ Available on: {movie.accessDate}</p>
+                <p className={movie.included ? "text-green-600" : "text-orange-500"}>
+                  {movie.included ? "✅ Included in Your Plan" : "🔒 Premium Add-on"}
+                </p>
+                <Button className="w-full" variant={movie.included ? "default" : "secondary"}>
+                  {movie.included ? "Book Now" : "Top-Up & Watch"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-3 text-center">
+            <p className="text-xl">🚫 No movies found for this category.</p>
+            <p className="text-sm text-muted-foreground">Try selecting a different category or check back later.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
